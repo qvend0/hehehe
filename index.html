@@ -3,33 +3,40 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Troll Mèo</title>
+<title>Troll Mèo VIP</title>
 <style>
   body {
     margin: 0;
-    font-family: sans-serif;
+    font-family: "Segoe UI", sans-serif;
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
-    background: #fef9f6;
-    text-align: center;
+    background: radial-gradient(circle at 30% 20%, #fdfcfb, #e9f0ff);
     overflow: hidden;
+    text-align: center;
   }
-  h2 { margin-bottom: 20px; }
+  h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+  h2 span { font-size: 28px; }
 
   button {
-    padding: 14px 20px;
+    padding: 14px 22px;
     margin: 8px;
     font-size: 18px;
     border: none;
-    border-radius: 10px;
+    border-radius: 12px;
     cursor: pointer;
+    box-shadow: 0 5px 14px rgba(0,0,0,.1);
+    transition: transform .2s;
   }
   #btn-true {
-    background: #10b981;
+    background: linear-gradient(135deg,#34d399,#059669);
     color: white;
   }
+  #btn-true:active { transform: scale(0.92); }
   #btn-run {
     background: #f43f5e;
     color: white;
@@ -42,18 +49,30 @@
     transform: translateX(-50%);
     background: rgba(0,0,0,0.8);
     color: #fff;
-    padding: 8px 14px;
-    border-radius: 8px;
+    padding: 10px 16px;
+    border-radius: 10px;
     font-size: 14px;
     opacity: 0;
     transition: opacity .25s;
   }
   .toast.show { opacity: 1; }
+
+  /* mèo bay */
+  .cat {
+    position: fixed;
+    font-size: 28px;
+    pointer-events: none;
+    animation: fly 1.2s forwards ease-out;
+  }
+  @keyframes fly {
+    from { transform: translate(0,0) scale(1); opacity: 1; }
+    to   { transform: translate(var(--x), var(--y)) scale(0.5); opacity: 0; }
+  }
 </style>
 </head>
 <body>
   <div>
-    <h2>Nó là mèo mướp hay mèo rừng châu Phi?</h2>
+    <h2><span>🐱</span> Nó là mèo mướp hay mèo rừng châu Phi?</h2>
     <button id="btn-true">mèo mướp</button>
     <button id="btn-run">mèo rừng châu Phi</button>
   </div>
@@ -64,7 +83,12 @@ const btnRun  = document.getElementById('btn-run');
 const btnTrue = document.getElementById('btn-true');
 const toast   = document.getElementById('toast');
 
-btnTrue.addEventListener('click', () => showToast('Đúng rồi, mèo mướp 😺'));
+btnTrue.addEventListener('click', () => {
+  showToast('Chuẩn! Đó là mèo mướp 😺');
+  btnTrue.style.transform = 'scale(1.15)';
+  setTimeout(()=> btnTrue.style.transform = 'scale(1)', 250);
+  spawnCats();
+});
 
 function jump() {
   const r = btnRun.getBoundingClientRect();
@@ -83,7 +107,7 @@ btnRun.addEventListener('touchstart', (e) => {
   jump();
 }, {passive:false});
 
-// máy tính: click hoặc rê tới => chạy
+// máy tính: hover hoặc click => chạy
 btnRun.addEventListener('mouseenter', jump);
 btnRun.addEventListener('click', (e) => { e.preventDefault(); jump(); });
 
@@ -91,7 +115,22 @@ function showToast(msg) {
   toast.textContent = msg;
   toast.classList.add('show');
   clearTimeout(showToast._t);
-  toast._t = setTimeout(()=>toast.classList.remove('show'), 1200);
+  toast._t = setTimeout(()=>toast.classList.remove('show'), 1300);
+}
+
+// tạo icon mèo bay tung tóe
+function spawnCats() {
+  for (let i=0;i<6;i++) {
+    const cat = document.createElement('div');
+    cat.className = 'cat';
+    cat.textContent = '🐱';
+    cat.style.left = (btnTrue.offsetLeft + btnTrue.offsetWidth/2) + 'px';
+    cat.style.top  = (btnTrue.offsetTop + btnTrue.offsetHeight/2) + 'px';
+    cat.style.setProperty('--x', (Math.random()*200-100)+'px');
+    cat.style.setProperty('--y', (Math.random()*-180-60)+'px');
+    document.body.appendChild(cat);
+    setTimeout(()=>cat.remove(), 1200);
+  }
 }
 </script>
 </body>
