@@ -3,201 +3,96 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Troll: Mèo mướp hay mèo rừng châu Phi?</title>
+<title>Troll Mèo</title>
 <style>
-  :root { --pad: 16px; --gap: 12px; }
-  * { box-sizing: border-box; }
-  html, body {
-    height: 100%;
+  body {
     margin: 0;
-    font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    background: radial-gradient(circle at 30% 20%, #f8fafc, #eef2ff);
-    overflow: hidden; /* cho vui, khỏi hiện thanh cuộn khi nút chạy */
-  }
-
-  .wrap {
-    height: 100%;
-    display: grid;
-    place-items: center;
+    font-family: sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: #fef9f6;
     text-align: center;
-    padding: var(--pad);
+    overflow: hidden;
   }
-
-  h1 {
-    margin: 0 0 10px;
-    font-size: clamp(20px, 3.2vw + 12px, 32px);
-  }
-  p { margin: 0 0 22px; color: #475569 }
-
-  .answers {
-    display: inline-flex;
-    gap: var(--gap);
-    position: relative;
-  }
+  h2 { margin-bottom: 20px; }
 
   button {
-    border: 0;
-    padding: 12px 18px;
-    font-size: 16px;
-    border-radius: 12px;
+    padding: 14px 20px;
+    margin: 8px;
+    font-size: 18px;
+    border: none;
+    border-radius: 10px;
     cursor: pointer;
-    box-shadow: 0 6px 18px rgba(0,0,0,.08);
-    transition: transform .06s ease, box-shadow .2s ease, opacity .2s ease;
-    user-select: none;
-    touch-action: manipulation;
-    background: white;
   }
-  button:active { transform: scale(.98) }
-
-  /* Nút chạy */
-  #btn-run {
-    position: fixed; /* để chạy khắp màn hình */
-    left: 50%; top: 62%;
-    transform: translate(-50%, -50%);
-    z-index: 10;
-  }
-
-  /* “Không nhấp được” – vẫn cho hover để phát hiện tới gần */
-  #btn-run.blocked {
-    pointer-events: auto;          /* vẫn nhận hover/move */
-  }
-
-  /* Hiệu ứng run khi rê gần */
-  #btn-run.dodge {
-    box-shadow: 0 10px 24px rgba(0,0,0,.15);
-  }
-
-  /* Nút đúng */
   #btn-true {
     background: #10b981;
     color: white;
   }
-  #btn-true:hover { filter: brightness(1.05) }
-
-  /* Thông báo nhỏ */
+  #btn-run {
+    background: #f43f5e;
+    color: white;
+    position: fixed;
+  }
   .toast {
     position: fixed;
-    inset: auto 0 18px 0;
-    margin: auto;
-    width: fit-content;
-    background: #111827;
-    color: white;
-    padding: 10px 14px;
-    border-radius: 10px;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0,0,0,0.8);
+    color: #fff;
+    padding: 8px 14px;
+    border-radius: 8px;
     font-size: 14px;
     opacity: 0;
-    transform: translateY(10px);
-    transition: .25s ease;
-    pointer-events: none;
+    transition: opacity .25s;
   }
-  .toast.show { opacity: 1; transform: translateY(0) }
+  .toast.show { opacity: 1; }
 </style>
 </head>
 <body>
-  <div class="wrap" aria-live="polite">
-    <div>
-      <h1>Nó là mèo mướp hay mèo rừng châu Phi?</h1>
-      <p>Chọn đáp án đúng nha 😼</p>
-
-      <div class="answers">
-        <button id="btn-true" type="button">mèo mướp</button>
-        <!-- Nút chạy: “không nhấp vào được” -->
-        <button id="btn-run" class="blocked" type="button" aria-disabled="true">
-          mèo rừng châu Phi
-        </button>
-      </div>
-    </div>
+  <div>
+    <h2>Nó là mèo mướp hay mèo rừng châu Phi?</h2>
+    <button id="btn-true">mèo mướp</button>
+    <button id="btn-run">mèo rừng châu Phi</button>
   </div>
-
-  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <div id="toast" class="toast"></div>
 
 <script>
-(function () {
-  const btnRun  = document.getElementById('btn-run');
-  const btnTrue = document.getElementById('btn-true');
-  const toast   = document.getElementById('toast');
+const btnRun  = document.getElementById('btn-run');
+const btnTrue = document.getElementById('btn-true');
+const toast   = document.getElementById('toast');
 
-  // Không cho bấm “mèo rừng châu Phi”
-  btnRun.addEventListener('click', (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    nope();
-  });
+btnTrue.addEventListener('click', () => showToast('Đúng rồi, mèo mướp 😺'));
 
-  function nope() {
-    showToast('Không bấm được đâu! 🤭');
-    jumpSomewhere();
-  }
+function jump() {
+  const r = btnRun.getBoundingClientRect();
+  const w = window.innerWidth;
+  const h = window.innerHeight;
+  const nx = Math.random() * (w - r.width  - 20);
+  const ny = Math.random() * (h - r.height - 20);
+  btnRun.style.left = nx + 'px';
+  btnRun.style.top  = ny + 'px';
+  showToast('Không bấm được đâu 🤭');
+}
 
-  // Khi rê chuột tới gần hoặc chạm vào là chạy
-  let hoverArmed = true;
+// điện thoại: chạm => chạy
+btnRun.addEventListener('touchstart', (e) => {
+  e.preventDefault();
+  jump();
+}, {passive:false});
 
-  function nearMouse(ev) {
-    const r = btnRun.getBoundingClientRect();
-    const mx = ev.clientX, my = ev.clientY;
-    const pad = 80; // khoảng cách “nhạy”
-    const isNear =
-      mx > r.left - pad && mx < r.right + pad &&
-      my > r.top  - pad && my < r.bottom + pad;
+// máy tính: click hoặc rê tới => chạy
+btnRun.addEventListener('mouseenter', jump);
+btnRun.addEventListener('click', (e) => { e.preventDefault(); jump(); });
 
-    if (isNear && hoverArmed) {
-      hoverArmed = false;
-      btnRun.classList.add('dodge');
-      jumpSomewhere();
-      setTimeout(()=>{ hoverArmed = true; btnRun.classList.remove('dodge'); }, 140);
-    }
-  }
-
-  document.addEventListener('mousemove', nearMouse, { passive: true });
-  btnRun.addEventListener('mouseenter', nope, { passive: true });
-  btnRun.addEventListener('touchstart', (e) => { e.preventDefault(); nope(); }, { passive: false });
-
-  // Nút đúng
-  btnTrue.addEventListener('click', () => {
-    showToast('Chuẩn bài! Đó là mèo mướp 😺');
-  });
-
-  // Nhảy tới vị trí ngẫu nhiên trong khung nhìn (không văng ra ngoài)
-  function jumpSomewhere() {
-    const r = btnRun.getBoundingClientRect();
-    const w = window.innerWidth;
-    const h = window.innerHeight;
-
-    const margin = 10;
-    const maxX = Math.max(margin, w - r.width  - margin);
-    const maxY = Math.max(margin, h - r.height - margin);
-
-    // chọn vị trí cách xa vị trí hiện tại một chút
-    let nx, ny, tries = 0;
-    do {
-      nx = Math.random() * maxX;
-      ny = Math.random() * maxY;
-      tries++;
-      // tránh nhảy quá gần vị trí cũ
-    } while (distance(nx, ny, r.left, r.top) < 120 && tries < 12);
-
-    btnRun.style.left = nx + 'px';
-    btnRun.style.top  = ny + 'px';
-    btnRun.style.transform = 'translate(0,0)';
-  }
-
-  function distance(x1,y1,x2,y2){ return Math.hypot(x1-x2, y1-y2); }
-
-  function showToast(msg) {
-    toast.textContent = msg;
-    toast.classList.add('show');
-    clearTimeout(showToast._t);
-    showToast._t = setTimeout(()=> toast.classList.remove('show'), 1500);
-  }
-
-  // Chặn double-tap zoom trên iOS khi rượt đuổi
-  let lastTouch = 0;
-  document.addEventListener('touchend', (e) => {
-    const now = Date.now();
-    if (now - lastTouch <= 350) e.preventDefault();
-    lastTouch = now;
-  }, { passive: false });
-})();
+function showToast(msg) {
+  toast.textContent = msg;
+  toast.classList.add('show');
+  clearTimeout(showToast._t);
+  toast._t = setTimeout(()=>toast.classList.remove('show'), 1200);
+}
 </script>
 </body>
 </html>
