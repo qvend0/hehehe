@@ -3,7 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tín Hiệu Bí Ẩn</title>
+
+<title>‎</title>
+
+<meta property="og:title" content="">
+<meta property="og:description" content="">
+<meta property="og:image" content="">
+<meta property="og:type" content="website">
 
 <style>
 *{
@@ -26,8 +32,7 @@ body{
     position:absolute;
     width:100%;
     height:100%;
-    background:
-    radial-gradient(white 1px, transparent 1px);
+    background:radial-gradient(white 1px, transparent 1px);
     background-size:40px 40px;
     opacity:.15;
     animation:move 20s linear infinite;
@@ -130,12 +135,14 @@ button:hover{
 }
 </style>
 </head>
+
 <body>
 
 <div class="stars"></div>
 
 <div class="box">
     <div class="title">TÍN HIỆU LẠ ĐÃ ĐƯỢC PHÁT HIỆN</div>
+
     <div class="desc">
         Chỉ một số ít người dám mở nội dung này...
     </div>
@@ -146,20 +153,29 @@ button:hover{
 </div>
 
 <div id="vipro">
-    <!-- Thay ảnh này bằng ảnh của bạn -->
-    <img src="https://files.catbox.moe/g2gp7r.jpeg" alt="VIPRO">
+    <img src="https://files.catbox.moe/g2gp7r.jpeg" alt="">
 
     <div id="text">
         <span class="cursor">|</span>
     </div>
 </div>
 
+<!-- THAY LINK MP3 CỦA BẠN Ở ĐÂY -->
+<audio id="bgMusic">
+    <source src="https://files.catbox.moe/ie601r.mp3" type="audio/mpeg">
+</audio>
+
 <script>
 function openSecret(){
 
+    // Phát nhạc
+    document.getElementById("bgMusic").play();
+
+    // Hiện ảnh
     const vipro = document.getElementById("vipro");
     vipro.classList.add("show");
 
+    // Hiệu ứng chữ
     const textDiv = document.getElementById("text");
 
     setTimeout(() => {
@@ -183,9 +199,9 @@ function openSecret(){
                 '<span class="cursor">|</span>';
             }
 
-        }, 120);
+        },120);
 
-    }, 1200);
+    },1200);
 }
 </script>
 
